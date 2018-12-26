@@ -110,6 +110,8 @@ static void ITCAST_Error_Core(const char *file, int line, int level, int status,
 	{
 		return ;
 	}
+
+	// printf("%s\n", str);
 	
     //写入LOG文件
     #ifdef FILE_LOG
@@ -119,9 +121,9 @@ static void ITCAST_Error_Core(const char *file, int line, int level, int status,
     //关闭文件
     close(pf);
 	#else
-	printf("%s", str);
+	printf("%s\n", str);
 	#endif
-    
+	
     return ;
 }
 

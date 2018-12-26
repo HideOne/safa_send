@@ -32,10 +32,10 @@ const char *fmt：可变参数
 //实际使用的Level
 extern int  LogLevel[5];
 
-#define FILE_LOG
+// #define FILE_LOG
 #define LOG(level, status, format, ...) \
 { \
- ITDER_LOG(__FILE__, __LINE__, level, LogLevel[status], format, ##__VA_ARGS__); \
+ ITDER_LOG(__FILE__, __LINE__, LogLevel[level], status, format, ##__VA_ARGS__); \
 } \
 
 #define LOG_INFO(format, ...) \
@@ -43,6 +43,17 @@ extern int  LogLevel[5];
   printf("file:%s, line: %d", __FILE__, __LINE__); \
   printf(format, ##__VA_ARGS__); \
 } \
+
+#define LOG_ERR_FUN(status, format, ...) \
+{ \
+ ITDER_LOG(__FILE__, __LINE__, LogLevel[4], status, format, ##__VA_ARGS__); \
+} \
+
+#define LOG_INFO_FUN(status, format, ...) \
+{ \
+ ITDER_LOG(__FILE__, __LINE__, LogLevel[2], status, format, ##__VA_ARGS__); \
+} \
+
 
 
 

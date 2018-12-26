@@ -13,6 +13,8 @@ extern "C" {
 #define		KeyMng_NEWorUPDATE		1		//1 密钥更新 
 #define		KeyMng_Check			2		//2 密钥校验
 #define		KeyMng_Revoke			3		//3 密钥注销
+#define  un_char 	unsigned char
+#define  unit_4 	int 
 
 #define  ID_MsgType_Teacher  80
 typedef struct _Teacher
@@ -46,6 +48,7 @@ typedef struct  _MsgKey_Res
 	char				clientId[12];	//客户端编号
 	char				serverId[12];	//服务器编号
 	unsigned char		r2[64];			//服务器端随机数
+	int					seckeyid;		//对称密钥编号
 }MsgKey_Res;
 
 
