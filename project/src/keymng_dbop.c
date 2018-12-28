@@ -26,8 +26,15 @@ int dbGetSckeyId(void* dbhandle, int* keyid)
 	unit_4 ret = 0;
 	ICDBHandle handle = (ICDBHandle)dbhandle;
 	// int waitTIme = 3;
-	ICDBRow row;
+	ICDBRow row = {0};
+	ICDBField file = {0};
+	unit_4 ikeytmp = 0;
+	row.field = &file;
+	row.fieldCount = 1;
+	
 	char sql[128] = {0};
+	file.cont = (char*)&ikeytmp;
+	file.contLen = sizeof(ikeytmp);
 //    ret = IC_DBApi_ConnGet(&handle, waitTIme, int nsTimeout, 0);
 //	if(ret != 0) 
 //	{
@@ -36,16 +43,18 @@ int dbGetSckeyId(void* dbhandle, int* keyid)
 //	}
 	// 开启事务
 	// IC_DBApi_BeginTran(handle);
+	sprintf(sql, "select ikeysn from SECMNG.KEYSN for update");
 
-	ret = IC_DBApi_ExecSelSql(handle, "select * from KEYSN;", &row);
+	ret = IC_DBApi_ExecSelSql(handle, sql, &row);
 	if(ret != 0)
 	{
 	    LOG_ERR_FUN(ret, "IC_DBApi_ExecSelSql func is err");
 		return ret;
 	}
 
-	int key = atoi(row.field->cont);
-	sprintf(sql, "update KEYSN set IKEYSN = %d;", key + 1);
+	memset(sql, 0, 128);
+	// int key = atoi(row.field->cont);
+	sprintf(sql, "update KEYSN set IKEYSN = %d", ikeytmp + 1);
 	
 	ret = IC_DBApi_ExecNSelSql(handle, sql);
 	if(ret != 0)
@@ -56,7 +65,7 @@ int dbGetSckeyId(void* dbhandle, int* keyid)
 
 	// IC_DBApi_Commit(handle);
 
-	*keyid = key;
+	*keyid = ikeytmp;
 	return ret;
 	
 }
@@ -88,7 +97,7 @@ int dbWriteClient2Sql(void* dbhandle, NODESHMINFO_STRU* shmNode)
 	}
 
 	// 组织sql
-	sprintf(sql, "insert into SECMNG.SECKYEINFO (CLIENTID, SERVERID, KEYID, CREATETIME, STATE, SECKEY) values ('%s', '%s', %d, '%s', %d, '%s'",
+	sprintf(sql, "insert into SECMNG.SECKYEINFO (CLIENTID, SERVERID, KEYID, CREATETIME, STATE, SECKEY) values ('%s', '%s', %d, '%s', %d, '%s')",
 		shmNode->clientId, shmNode->serverId, shmNode->seckeyid, dbTime, shmNode->status, tmpSeckey);
 
 	// 执行sql
